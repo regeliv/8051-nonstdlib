@@ -1,17 +1,17 @@
 ; PUSHR [MACRO]
 ; push register onto stack
 ; usage: pushr r7
-pushr	macro	reg
-	mov 	b, reg
-	push 	b
+pushr    macro    reg
+    mov     b, reg
+    push     b
 endm
 
 ; POPR [MACRO]
 ; pop from stack into register
 ; usage: popr r6
-popr	macro	reg
-	pop		b
-	mov		reg, b
+popr    macro    reg
+    pop     b
+    mov     reg, b
 endm
 
 ; CMP [MACRO]
@@ -23,39 +23,39 @@ endm
 ;        jz  equal_label   
 ;        jc  less_label
 ;        jnc greater_laber
-cmp		macro	reg1, reg2
+cmp        macro    reg1, reg2
     clr     c
-	mov		a, reg1
-	subb	a, reg2
+    mov     a, reg1
+    subb    a, reg2
 endm
 
 ; bank{0,1,2,3} [MACRO]
 ; change register back to specified number
 ; usage: bank3
-bank0 	macro
-	anl		psw, #11100111b
+bank0     macro
+    anl     psw, #11100111b
 endm
 
-bank1	macro
-	setb	rs0
-	clr		rs1
+bank1    macro
+    setb    rs0
+    clr     rs1
 endm
 
-bank2	macro
-	clr		rs0
-	setb	rs1
+bank2    macro
+    clr     rs0
+    setb    rs1
 endm
 
-bank3	macro
-	orl		psw, #00011000b
+bank3    macro
+    orl        psw, #00011000b
 endm
 
-; movr	[MACRO]
+; movr    [MACRO]
 ; move reg2 to r1
 ; usage: movr r3, r7
-movr	macro   reg1, reg2
-	mov		b, reg2
-	mov		reg1, b
+movr    macro   reg1, reg2
+    mov     b, reg2
+    mov     reg1, b
 endm
 
 ; add16 [MACRO]
@@ -81,7 +81,7 @@ endm
 ; other registers are callee saved
 ; in interrupts all registers are callee saved
 ;
-; after a procedure cpu is left in bank3
+; after a procedure the cpu is left in bank3
     
 
 ; fn memcpy(dst: u8, src: u8, cnt: u8) void
@@ -91,45 +91,45 @@ endm
 ; r1@b3 (19h) := src
 ; r2@b3 (1Ah) := cnt
 memcpy:
-	bank3
+    bank3
 __memcpy_loop:
-	mov 	a, r2
-	jz		__memcpy_end
-	
-	mov		a, @r1
-	mov		@r0, a
-	
-	dec		r2
-	inc 	r1
-	inc		r0
-	jmp 	__memcpy_loop
+    mov     a, r2
+    jz      __memcpy_end
+    
+    mov     a, @r1
+    mov     @r0, a
+    
+    dec     r2
+    inc     r1
+    inc     r0
+    jmp     __memcpy_loop
 
 __memcpy_end:
-	ret
+    ret
 
 ; fn memcpy(dst: u8, src: u16, cnt: u8) void
 ; copy cnt bytes from src to dst
 ; cpu is left in bank3 after returning
 ; r0@b3 (18h) := dst
-; dptr  	  := src
+; dptr        := src
 ; r1@b3 (19h) := cnt
 memcpy_disk:
-	bank3
+    bank3
 __memcpy_disk_loop:
-	mov		a, r1
-	jz		__memcpy_disk_end
-	
-	clr		a
-	movc    a, @a+dptr
-	mov		@r0, a
-	
-	inc		dptr
-	inc		r0
-	dec		r1
-	jmp		__memcpy_disk_loop
+    mov     a, r1
+    jz      __memcpy_disk_end
+    
+    clr     a
+    movc    a, @a+dptr
+    mov     @r0, a
+    
+    inc     dptr
+    inc     r0
+    dec     r1
+    jmp     __memcpy_disk_loop
 __memcpy_disk_end:
-	ret
-	
+    ret
+    
 ; fn dec_cycle_cnt(ptr: u8, beg_addr: u8, cnt: u8)
 ; decrement ptr, if ptr < beg_addr, then set ptr to beg_addr+cnt-1
 ; this function is used to facilitate cyclical buffer usage
