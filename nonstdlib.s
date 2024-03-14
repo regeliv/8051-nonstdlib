@@ -71,7 +71,7 @@ add16   macro   num1h, num1l, num2h, num2l
 endm
 
 ; ABI:
-; arguments to procedurs are passed in registers of bank3 and dptr:
+; arguments to procedures are passed in registers of bank3 and dptr:
 ; rN@bM means the N-th register of M-th bank
 ; r0@b3 - first argument
 ; r1@b3 - second argument etc.
